@@ -4,8 +4,13 @@ import numpy as np
 from pymavlink import mavutil
 import time
 import math
+from collections import namedtuple
 
-point = LocationGlobalRelative(48.581586, 7.764111, 2)
+
+# Classe Position
+Position = namedtuple('Position', ['lat_deg', 'lon_deg', 'relative_alt_m'])
+
+point = Position(lat_deg=48.581586, lon_deg = 7.764111, relative_alt_m = 2)
 
 time.sleep(1)
 
@@ -17,42 +22,104 @@ chemin_drone = '/dev/ttyACM0'
 
 # Connect to the Vehicle (in this case a UDP endpoint)
 print ("Connexion au vehicule ...")
-vehicle = connect(chemin_drone, wait_ready=False, baud=57600, heartbeat_timeout=2)
-print ("Connexion établie !")
+vehicle = mavutil.mavlink_connection('udp:127.0.0.1:14551')
+# Attente du premier message HEARTBEAT (confirmation de connexion)
+vehicle.wait_heartbeat()
+print("Drone connecté")
 
+def is_armable():
+	""" Vérifie si le drone est armable """
+	msg = vehicle.recv_match(type='SYS_STATUS', blocking=True)
+	prearm_check = msg.onboard_control_sensors_health  # Bitmask du statut
+	return prearm_check > 0  # Si tout va bien, la valeur est non nulle
+
+# Fonction pour changer de mode
+def set_mode(mode_name):
+	""" Change le mode de vol du drone """
+	mode_id = vehicle.mode_mapping().get(mode_name)
+	if mode_id is None:
+		print(f"Mode {mode_name} inconnu !")
+		return
+
+	# Envoi du message MAVLink pour changer de mode
+	vehicle.mav.set_mode_send(
+		vehicle.target_system,
+		mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
+		mode_id
+	)
+	#print(f"Demande de passage en mode {mode_name} envoyée.")
+
+	# Attendre la confirmation
+	while True:
+		msg = vehicle.recv_match(type='HEARTBEAT', blocking=True)
+		if msg.custom_mode == mode_id:
+			#print(f"Mode {mode_name} activé !")
+			break
+
+def get_mode():
+	""" Récupère et affiche le mode de vol actuel """
+	msg = vehicle.recv_match(type='HEARTBEAT', blocking=True)
+	if not msg:
+		print("Impossible de récupérer le mode.")
+		return None
+
+	mode_id = msg.custom_mode  # ID du mode actuel
+	mode_name = None
+
+	# Mapper l'ID avec un nom de mode
+	for name, mode in vehicle.mode_mapping().items():
+		if mode == mode_id:
+			mode_name = name
+			break
+
+	if mode_name:
+		print(f"Mode actuel : {mode_name}")
+	else:
+		print(f"Mode inconnu (ID: {mode_id})")
+
+	return mode_name
+
+
+# Fonction de decollage du drone du GitHub de dronekit
 def arm_and_takeoff(aTargetAltitude):
-    """
-    Arms vehicle and fly to aTargetAltitude.
-    """
+	"""
+	Arms vehicle and fly to aTargetAltitude.
+	"""
 
-    print ("Verifications basiques de pre-armement")
-    # Don't try to arm until autopilot is ready
-    while not vehicle.is_armable:
-        print (" En attente de l'initialisation du vehicule...")
-        time.sleep(1)
+	print("Basic pre-arm checks")
+	# Don't try to arm until autopilot is ready
+	while not is_armable():
+		print(" Waiting for vehicle to initialise...")
 
-    print ("Armement des moteurs")
-    # Copter should arm in GUIDED mode
-    vehicle.mode    = VehicleMode("GUIDED")
-    vehicle.armed   = True
+	time.sleep(1)
+	print("Arming motors")
 
-    # Confirm vehicle armed before attempting to take off
-    while not vehicle.armed:
-        print (" En attente d'armement...")
-        time.sleep(1)
+	# Copter should arm in GUIDED mode
+	set_mode("GUIDED")
+	vehicle.arducopter_arm()  # On arme le drone
 
-    print ("Décollage!")
-    vehicle.simple_takeoff(aTargetAltitude) # Take off to target altitude
+	# Confirm vehicle armed before attempting to take off
+	vehicle.motors_armed_wait()
+	print("Drone armé")
 
-    # Wait until the vehicle reaches a safe height before processing the goto (otherwise the command
-    #  after Vehicle.simple_takeoff will execute immediately).
-    while True:
-        print (" Altitude: ", vehicle.location.global_relative_frame.alt)
-        #Break and return from function just below target altitude.
-        if vehicle.location.global_relative_frame.alt>=aTargetAltitude*0.95:
-            print ("Altitude souhaitee atteinte")
-            break
-        time.sleep(1)
+	print("Taking off!")
+	# Décollage
+	vehicle.mav.command_long_send(vehicle.target_system, vehicle.target_component,
+								 mavutil.mavlink.MAV_CMD_NAV_TAKEOFF, 0,
+								 0, 0, 0, 0, 0, 0, aTargetAltitude
+								 )
+	print(f"Décollage à {aTargetAltitude}m")
+
+	# Attente de l'altitude cible
+	while True:
+		msg = vehicle.recv_match(type='GLOBAL_POSITION_INT', blocking=True)
+		alt = msg.relative_alt / 1000.0  # Convertir en mètres
+		print(f"Altitude : {alt:.1f}m")
+		if alt >= aTargetAltitude * 0.95:  # Seuil de 95%
+			print("Altitude atteinte !")
+			break
+			time.sleep(0.2)
+
 
 def get_distance_metres(aLocation1, aLocation2):
     """
@@ -66,18 +133,53 @@ def get_distance_metres(aLocation1, aLocation2):
     dlong = aLocation2.lon - aLocation1.lon
     return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
 
+# Fonction pour aller à un waypoint en attendant d'être arrivé
+def goto(latitude, longitude, altitude):
+	""" Envoie le drone vers une position GPS en mode GUIDED """
+
+	# Vérifier si le drone est bien en mode GUIDED
+	set_mode("GUIDED")
+
+	# Envoyer la commande MAVLink NAV_WAYPOINT
+	vehicle.mav.mission_item_send(
+		vehicle.target_system, vehicle.target_component,
+		0,  # Séquence du waypoint
+		mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,  # Référence relative au sol
+		mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,  # Commande de navigation
+		2, 0,  # Confirmation requise
+		0, 0, 0, 0,  # Paramètres inutilisés
+		latitude, longitude, altitude  # Coordonnées
+	)
+	print(f"En route vers {latitude}, {longitude}, {altitude}m")
+
+	# Attendre d'atteindre le waypoint
+	while True:
+		msg = vehicle.recv_match(type="GLOBAL_POSITION_INT", blocking=True)
+		if msg:
+			current_lat = msg.lat / 1e7
+			current_lon = msg.lon / 1e7
+			current_alt = msg.relative_alt / 1000.0
+
+			print(f"Position actuelle : {current_lat}, {current_lon}, {current_alt}m")
+
+			# Vérification si on est proche du waypoint
+			if abs(current_lat - latitude) < 0.00005 and abs(current_lon - longitude) < 0.00005 and abs(
+					current_alt - altitude) < 0.5:
+				print("Waypoint atteint !")
+				break
+
 # Attente du mode "STABIIZE"
-while vehicle.mode != VehicleMode("STABILIZE"):
+while get_mode() != "STABILIZE":
     print("En attente du mode STABILIZE")
     time.sleep(1)
 
         # Attente du mode "AUTO"
-while vehicle.mode != VehicleMode("AUTO"):
+while get_mode() != "AUTO":
     print("En attente du mode AUTO")
     time.sleep(1)
 
         # Passage en mode "GUIDED"
-vehicle.mode = VehicleMode("GUIDED_NOGPS")
+set_mode("GUIDED")
 print ("Véhicule en mode guidé !")
 
 print ("Début de la procédure d'armement et de décollage ...")
@@ -89,24 +191,17 @@ print("Reglage de la vitesse aerienne à 3")
 vehicle.airspeed = 3
 
 print ("Début du vol vers le point")
-vehicle.simple_goto(point)
 
-pos = vehicle.location.global_relative_frame
-dist = get_distance_metres(pos, point)
-
-while(dist > 3):
-    time.sleep(0.3)
-    pos = vehicle.location.global_relative_frame
-    dist = get_distance_metres(pos, point)
-    print ("Distance au waypoint: {} m".format(dist))
-print("Waypoint atteint ! ")
+goto(point)
 
 time.sleep(1)
 
 print("Mise en mode atterrissage")
-vehicle.mode = VehicleMode("LAND")
+set_mode("LAND")
 
-print ("Deconnexion du vehicule")
-vehicle.close()
+print("Delai de 10 secondes")
+
+time.sleep(10)
+#vehicle.close()
 
 print ("Arret du script")
