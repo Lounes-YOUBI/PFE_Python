@@ -22,7 +22,7 @@ chemin_drone = '/dev/ttyACM0'
 
 # Connect to the Vehicle (in this case a UDP endpoint)
 print ("Connexion au vehicule ...")
-vehicle = mavutil.mavlink_connection('udp:127.0.0.1:14551')
+vehicle = mavutil.mavlink_connection('/dev/ttyACM0')
 # Attente du premier message HEARTBEAT (confirmation de connexion)
 vehicle.wait_heartbeat()
 print("Drone connecté")
