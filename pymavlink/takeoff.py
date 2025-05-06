@@ -35,6 +35,26 @@ def is_armable():
 	print("Bitmask extrait")
 	return prearm_check > 0  # Si tout va bien, la valeur est non nulle
 
+def is_armable2() -> bool:
+    """
+    Vérifie si le paramètre MAV_SYS_STATUS_PREARM_CHECK est activé (différent de 0).
+
+    Args:
+        connection (mavutil.mavlink_connection): Connexion MAVLink active au drone.
+
+    Returns:
+        bool: True si activé, False sinon.
+    """
+    # Envoie la requête pour obtenir la valeur du paramètre
+    vehicle.param_fetch_one("MAV_SYS_STATUS_PREARM_CHECK")
+
+    while True:
+        message = vehicle.recv_match(type="PARAM_VALUE", blocking=True, timeout=5)
+        if message and message.param_id.decode('utf-8').strip('\x00') == "MAV_SYS_STATUS_PREARM_CHECK":
+            return message.param_value != 0
+
+    return False  # En cas d'échec de lecture (non attendu si tout va bien)
+
 # Fonction pour changer de mode
 def set_mode(mode_name):
 	""" Change le mode de vol du drone """
@@ -90,7 +110,7 @@ def arm_and_takeoff(aTargetAltitude):
 
 	print("Basic pre-arm checks")
 	# Don't try to arm until autopilot is ready
-	while not is_armable():
+	while not is_armable2():
 		print(" Waiting for vehicle to initialise...")
 
 	time.sleep(1)
