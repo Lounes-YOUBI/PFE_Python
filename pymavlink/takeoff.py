@@ -78,7 +78,7 @@ def set_mode(mode_name):
 			#print(f"Mode {mode_name} activé !")
 			break
 
-def get_mode(vehicle):
+def get_mode():
     """
     Récupère et affiche le mode de vol actuel du drone.
     Le message HEARTBEAT est lu juste avant la lecture du mode.
