@@ -78,33 +78,35 @@ def set_mode(mode_name):
 			#print(f"Mode {mode_name} activé !")
 			break
 
-def get_mode():
+def get_mode(vehicle):
     """
-    Récupère et affiche le mode de vol actuel à l'aide de mavutil.mode_string_v10().
+    Récupère et affiche le mode de vol actuel du drone.
+    Le message HEARTBEAT est lu juste avant la lecture du mode.
 
     Paramètres :
-        vehicle : objet mavutil.mavlink_connection connecté au drone.
+        vehicle : objet mavutil.mavlink_connection
 
     Retourne :
         Le nom du mode de vol (str) ou None si non disponible.
     """
-    # Attendre un message HEARTBEAT
-    msg = vehicle.recv_match(type='HEARTBEAT', blocking=True)
+    # Lire le message HEARTBEAT le plus récent (attente bloquante)
+    msg = vehicle.recv_match(type='HEARTBEAT', blocking=True, timeout=5)
     if not msg:
-        print("❌ Impossible de récupérer le message HEARTBEAT.")
+        print("❌ Aucun message HEARTBEAT reçu.")
         return None
 
-    # Mettre à jour le dictionnaire des messages pour que mode_string_v10 fonctionne
+    # Mettre à jour le cache des messages si nécessaire
     vehicle.messages['HEARTBEAT'] = msg
 
-    # Utiliser la fonction mavutil pour obtenir le nom du mode
+    # Lire et afficher le mode à partir du message mis à jour
     try:
-        mode_name = mavutil.mode_string_v10(msg)
-        print(f"✅ Mode actuel du drone : {mode_name}")
-        return mode_name
+        mode = mavutil.mode_string_v10(msg)
+        print(f"✅ Mode actuel du drone : {mode}")
+        return mode
     except Exception as e:
         print(f"⚠️ Erreur lors de la lecture du mode : {e}")
         return None
+
 
 
 # Fonction de decollage du drone du GitHub de dronekit
