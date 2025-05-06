@@ -30,7 +30,9 @@ print("Drone connecté")
 def is_armable():
 	""" Vérifie si le drone est armable """
 	msg = vehicle.recv_match(type='SYS_STATUS', blocking=True)
+	print("Message de statut lu")
 	prearm_check = msg.onboard_control_sensors_health  # Bitmask du statut
+	print("Bitmask extrait")
 	return prearm_check > 0  # Si tout va bien, la valeur est non nulle
 
 # Fonction pour changer de mode
