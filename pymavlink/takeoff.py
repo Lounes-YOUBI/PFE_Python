@@ -80,33 +80,31 @@ def set_mode(mode_name):
 
 def get_mode():
     """
-    Récupère et affiche le mode de vol actuel du drone.
-    Le message HEARTBEAT est lu juste avant la lecture du mode.
+    Récupère et affiche le mode de vol actuel à l'aide de mavutil.mode_string_v10().
 
     Paramètres :
-        vehicle : objet mavutil.mavlink_connection
+        vehicle : objet mavutil.mavlink_connection connecté au drone.
 
     Retourne :
         Le nom du mode de vol (str) ou None si non disponible.
     """
-    # Lire le message HEARTBEAT le plus récent (attente bloquante)
-    msg = vehicle.recv_match(type='HEARTBEAT', blocking=True, timeout=5)
+    # Attendre un message HEARTBEAT
+    msg = vehicle.recv_match(type='HEARTBEAT', blocking=True)
     if not msg:
-        print("❌ Aucun message HEARTBEAT reçu.")
+        print("❌ Impossible de récupérer le message HEARTBEAT.")
         return None
 
-    # Mettre à jour le cache des messages si nécessaire
+    # Mettre à jour le dictionnaire des messages pour que mode_string_v10 fonctionne
     vehicle.messages['HEARTBEAT'] = msg
 
-    # Lire et afficher le mode à partir du message mis à jour
+    # Utiliser la fonction mavutil pour obtenir le nom du mode
     try:
-        mode = mavutil.mode_string_v10(msg)
-        print(f"✅ Mode actuel du drone : {mode}")
-        return mode
+        mode_name = mavutil.mode_string_v10(msg)
+        print(f"✅ Mode actuel du drone : {mode_name}")
+        return mode_name
     except Exception as e:
         print(f"⚠️ Erreur lors de la lecture du mode : {e}")
         return None
-
 
 
 # Fonction de decollage du drone du GitHub de dronekit
@@ -117,8 +115,8 @@ def arm_and_takeoff(aTargetAltitude):
 
 	print("Basic pre-arm checks")
 	# Don't try to arm until autopilot is ready
-	while not is_armable2():
-		print(" Waiting for vehicle to initialise...")
+	#while not is_armable2():
+		#print(" Waiting for vehicle to initialise...")
 
 	time.sleep(1)
 	print("Arming motors")
