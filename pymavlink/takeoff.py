@@ -95,7 +95,8 @@ def get_mode():
 			break
 
 	if mode_name:
-		print(f"Mode actuel : {mode_name}")
+		#print(f"Mode actuel : {mode_name}")
+        print(vehicle.flightmode())
 	else:
 		print(f"Mode inconnu (ID: {mode_id})")
 
