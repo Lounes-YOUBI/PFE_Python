@@ -31,7 +31,7 @@ while True:
 	msg = vehicle.recv_match(type='GLOBAL_POSITION_INT', blocking=True)
 	alt = msg.relative_alt / 1000.0  # Convertir en mètres
 	print(f"Altitude : {alt:.1f}m")
-	if alt >= 1:  
+	if alt >= 1:
 		print("Altitude atteinte !")
 		break
 		time.sleep(0.2)
