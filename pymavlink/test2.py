@@ -141,7 +141,7 @@ def arm_and_takeoff(aTargetAltitude):
 	# Attente de l'altitude cible
 	while True:
 		msg = vehicle.recv_match(type='DISTANCE_SENSOR', blocking=True)
-		alt = msg.relative_alt / 100.0  # Convertir en mètres
+		alt = msg.current_distance / 100.0  # Convertir en mètres
 		print(f"Altitude : {alt:.1f}m")
 		if alt >= aTargetAltitude * 0.95:  # Seuil de 95%
 			print("Altitude atteinte !")
@@ -172,5 +172,6 @@ while get_mode() != "AUTO":
 
 while True:
 	msg = vehicle.recv_match(type='DISTANCE_SENSOR', blocking=True)
-	alt = msg.relative_alt / 100.0  # Convertir en mètres
+	alt = msg.current_distance / 100.0  # Convertir en mètres
 	print(f"Altitude : {alt:.1f}m")
+	time.sleep(0.2)
