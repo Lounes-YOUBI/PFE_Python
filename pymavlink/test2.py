@@ -168,33 +168,7 @@ while get_mode() != "AUTO":
     print("En attente du mode AUTO")
     time.sleep(1)
 
-        # Passage en mode "GUIDED"
-set_mode("GUIDED")
-print ("Véhicule en mode guidé !")
-
-print ("Début de la procédure d'armement et de décollage ...")
-arm_and_takeoff(2)
-print ("Attente de 3 secondes")
-time.sleep(3)
-
-print("Mise en mode atterrissage")
-set_mode("LAND")
-
-# Disarm
-# master.arducopter_disarm() or:
-vehicle.mav.command_long_send(
-    vehicle.target_system,
-    vehicle.target_component,
-    mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM,
-    0,
-    0, 0, 0, 0, 0, 0, 0)
-
-# wait until disarming confirmed
-vehicle.motors_disarmed_wait()
-
-print("Delai de 10 secondes")
-
-time.sleep(10)
-
-
-print ("Arret du script")
+while True:
+	msg = vehicle.recv_match(type='DISTANCE_SENSOR', blocking=True)
+	alt = msg.relative_alt / 100.0  # Convertir en mètres
+	print(f"Altitude : {alt:.1f}m")
