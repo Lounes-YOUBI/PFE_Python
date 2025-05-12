@@ -25,7 +25,7 @@ vehicle = mavutil.mavlink_connection('/dev/ttyACM0')
 vehicle.wait_heartbeat()
 print("Drone connecté")
 
-vehicle.mav.request_data_stream_send(vehicle.target_system, vehicle.target_component, mavutil.mavlink.MAV_DATA_STREAM_ALL, 1, 1)
+vehicle.mav.request_data_stream_send(vehicle.target_system, vehicle.target_component, mavutil.mavlink.MAV_DATA_STREAM_ALL, 10, 1)
 
 
 def is_armable():
