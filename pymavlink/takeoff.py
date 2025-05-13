@@ -25,7 +25,7 @@ vehicle = mavutil.mavlink_connection('/dev/ttyACM0')
 vehicle.wait_heartbeat()
 print("Drone connecté")
 
-vehicle.mav.request_data_stream_send(vehicle.target_system, vehicle.target_component, mavutil.mavlink.MAV_DATA_STREAM_ALL, 10, 1)
+vehicle.mav.request_data_stream_send(vehicle.target_system, vehicle.target_component, mavutil.mavlink.MAV_DATA_STREAM_ALL, 1, 1)
 
 def is_armable():
 	""" Vérifie si le drone est armable """
@@ -161,12 +161,10 @@ def get_distance_metres(aLocation1, aLocation2):
 # Attente du mode "STABIIZE"
 while get_mode() != "STABILIZE":
     print("En attente du mode STABILIZE")
-    time.sleep(1)
-
+	
         # Attente du mode "AUTO"
 while get_mode() != "AUTO":
     print("En attente du mode AUTO")
-    time.sleep(1)
 
         # Passage en mode "GUIDED"
 set_mode("GUIDED")
