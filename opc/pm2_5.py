@@ -29,9 +29,14 @@ for i in range(100):
 # power off fan and laser
 dev.off()
 
-# Calcul de la moyenne et de l'écart type
+# Calculs statistiques
 mean_pm25 = statistics.mean(pm25_values)
 stdev_pm25 = statistics.stdev(pm25_values)
+min_pm25 = min(pm25_values)
+max_pm25 = max(pm25_values)
 
+# Affichage des résultats
 print(f"Moyenne PM2.5 : {mean_pm25:.2f}")
 print(f"Écart type PM2.5 : {stdev_pm25:.2f}")
+print(f"Minimum PM2.5 : {min_pm25:.2f}")
+print(f"Maximum PM2.5 : {max_pm25:.2f}")
