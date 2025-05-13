@@ -20,7 +20,7 @@ dev.on()
 for i in range(10):
     # query particle mass readings
     sleep(1)
-    print(type(dev.pm()))
+    print(dev.pm["PM2.5"])
 
 # power off fan and laser
 dev.off()
