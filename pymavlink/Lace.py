@@ -21,6 +21,8 @@ master = mavutil.mavlink_connection('/dev/ttyACM0')
 master.wait_heartbeat()
 print("Drone connecté")
 
+master.mav.request_data_stream_send(master.target_system, master.target_component, mavutil.mavlink.MAV_DATA_STREAM_ALL, 10, 1)
+
 
 ################################# Fonctions #######################################
 

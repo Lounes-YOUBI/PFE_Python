@@ -27,6 +27,8 @@ vehicle = mavutil.mavlink_connection('/dev/ttyACM0')
 vehicle.wait_heartbeat()
 print("Drone connecté")
 
+vehicle.mav.request_data_stream_send(vehicle.target_system, vehicle.target_component, mavutil.mavlink.MAV_DATA_STREAM_ALL, 10, 1)
+
 while True:
 	msg = vehicle.recv_match(type='GLOBAL_POSITION_INT', blocking=True)
 	alt = msg.relative_alt / 1000.0  # Convertir en mètres

@@ -25,7 +25,8 @@ vehicle = mavutil.mavlink_connection('/dev/ttyACM0')
 vehicle.wait_heartbeat()
 print("Drone connecté")
 
-vehicle.mav.request_data_stream_send(vehicle.target_system, vehicle.target_component, mavutil.mavlink.MAV_DATA_STREAM_ALL, 1, 1)
+vehicle.mav.request_data_stream_send(vehicle.target_system, vehicle.target_component, mavutil.mavlink.MAV_DATA_STREAM_ALL, 10, 1)
+
 
 def is_armable():
 	""" Vérifie si le drone est armable """
@@ -140,12 +141,11 @@ def arm_and_takeoff(aTargetAltitude):
 	# Attente de l'altitude cible
 	while True:
 		msg = vehicle.recv_match(type='DISTANCE_SENSOR', blocking=True)
-		alt = msg.relative_alt / 100.0  # Convertir en mètres
+		alt = msg.current_distance / 100.0  # Convertir en mètres
 		print(f"Altitude : {alt:.1f}m")
 		if alt >= aTargetAltitude * 0.95:  # Seuil de 95%
 			print("Altitude atteinte !")
 			break
-        time.sleep(0.2)
 
 
 def get_distance_metres(aLocation1, aLocation2):
@@ -172,5 +172,6 @@ while get_mode() != "AUTO":
 
 while True:
 	msg = vehicle.recv_match(type='DISTANCE_SENSOR', blocking=True)
-	alt = msg.relative_alt / 100.0  # Convertir en mètres
+	alt = msg.current_distance / 100.0  # Convertir en mètres
 	print(f"Altitude : {alt:.1f}m")
+	time.sleep(0.2)
