@@ -145,8 +145,6 @@ def arm_and_takeoff(aTargetAltitude):
 		if alt >= aTargetAltitude * 0.95:  # Seuil de 95%
 			print("Altitude atteinte !")
 			break
-        time.sleep(0.2)
-
 
 def get_distance_metres(aLocation1, aLocation2):
     """
