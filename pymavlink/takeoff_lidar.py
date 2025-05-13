@@ -161,12 +161,10 @@ def get_distance_metres(aLocation1, aLocation2):
 # Attente du mode "STABIIZE"
 while get_mode() != "STABILIZE":
     print("En attente du mode STABILIZE")
-    time.sleep(1)
 
         # Attente du mode "AUTO"
 while get_mode() != "AUTO":
     print("En attente du mode AUTO")
-    time.sleep(1)
 
         # Passage en mode "GUIDED"
 set_mode("GUIDED")
