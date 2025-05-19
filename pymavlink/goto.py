@@ -10,7 +10,7 @@ from collections import namedtuple
 # Classe Position
 Position = namedtuple('Position', ['lat_deg', 'lon_deg', 'relative_alt_m'])
 
-point = Position(lat_deg=48.581586, lon_deg = 7.764111, relative_alt_m = 2)
+point = Position(lat_deg=48.629735, lon_deg = 7.788432, relative_alt_m = 5)
 
 time.sleep(1)
 
@@ -90,8 +90,8 @@ def arm_and_takeoff(aTargetAltitude):
 
 	print("Basic pre-arm checks")
 	# Don't try to arm until autopilot is ready
-	while not is_armable():
-		print(" Waiting for vehicle to initialise...")
+	#while not is_armable2():
+		#print(" Waiting for vehicle to initialise...")
 
 	time.sleep(1)
 	print("Arming motors")
@@ -114,13 +114,13 @@ def arm_and_takeoff(aTargetAltitude):
 
 	# Attente de l'altitude cible
 	while True:
-		msg = vehicle.recv_match(type='GLOBAL_POSITION_INT', blocking=True)
-		alt = msg.relative_alt / 1000.0  # Convertir en mètres
+		msg = vehicle.recv_match(type='DISTANCE_SENSOR', blocking=True)
+		alt = msg.current_distance / 100.0  # Convertir en mètres
 		print(f"Altitude : {alt:.1f}m")
 		if alt >= aTargetAltitude * 0.95:  # Seuil de 95%
 			print("Altitude atteinte !")
 			break
-			time.sleep(0.2)
+
 
 
 def get_distance_metres(aLocation1, aLocation2):
@@ -194,7 +194,7 @@ vehicle.airspeed = 3
 
 print ("Début du vol vers le point")
 
-goto(point)
+goto(point.lat_deg, point.lon_deg, point.relative_alt_m)
 
 time.sleep(1)
 
