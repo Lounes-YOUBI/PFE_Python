@@ -157,11 +157,10 @@ def goto(latitude, longitude, altitude):
 	# Attendre d'atteindre le waypoint
 	while True:
 		msg = vehicle.recv_match(type="GLOBAL_POSITION_INT", blocking=True)
-		msg_alt = vehicle.recv_match(type='DISTANCE_SENSOR', blocking=True)
-		if msg and msg_alt:
+		if msg:
 			current_lat = msg.lat / 1e7
 			current_lon = msg.lon / 1e7
-			current_alt = msg_alt.current_distance / 100.0  # Convertir en mètres
+			current_alt = msg.relative_alt / 1000.0
 
 			print(f"Position actuelle : {current_lat}, {current_lon}, {current_alt}m")
 

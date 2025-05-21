@@ -171,7 +171,7 @@ set_mode("GUIDED")
 print ("Véhicule en mode guidé !")
 
 print ("Début de la procédure d'armement et de décollage ...")
-arm_and_takeoff(2)
+arm_and_takeoff(5)
 print ("Attente de 3 secondes")
 time.sleep(3)
 
