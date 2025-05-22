@@ -654,7 +654,7 @@ try:
 except:
 	alt = arg9.default
 # vehicle.parameters['RTL_ALT'] = alt
-set_param('RTL_ALT', 20)
+# set_param('RTL_ALT', 20)
 
 ##Parametres nuage##
 Seuil_Critique = 100  # Seuil critique qui declenche la procedure de fin de cartographie du nuage
