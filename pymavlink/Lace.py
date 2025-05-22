@@ -676,7 +676,8 @@ sample = 150
 # Point GPS du coeur du nuage de fumee
 # centre=LocationGlobalRelative(48.858114, 7.205582,alt)
 #centre = Position(lat_deg=48.858114, lon_deg = 7.205582, relative_alt_m = alt)
-centre = Position(lat_deg=48.581586, lon_deg = 7.764111, relative_alt_m = alt)
+centre = Position(lat_deg=48.629675, lon_deg = 7.787374, relative_alt_m = alt)
+
 
 
 # Points cardinaux defini pour la procedure de fin de suivi de frontiere
