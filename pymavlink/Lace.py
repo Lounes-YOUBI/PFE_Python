@@ -676,7 +676,7 @@ sample = 150
 # Point GPS du coeur du nuage de fumee
 # centre=LocationGlobalRelative(48.858114, 7.205582,alt)
 #centre = Position(lat_deg=48.858114, lon_deg = 7.205582, relative_alt_m = alt)
-centre = Position(lat_deg=48.629675, lon_deg = 7.787374, relative_alt_m = alt)
+centre = Position(lat_deg=48.6295618, lon_deg = 7.7871662, relative_alt_m = alt)
 
 
 
