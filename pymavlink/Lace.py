@@ -284,7 +284,8 @@ def Cercle(rayon, direction, pointsCercle, a, b, theta):
 # coords : Liste avec les coordonnees GPS (latitude,longitude)
 # aLoc : position GPS "LocationGlobalRelative" (latitude,longitude,altitude)
 def NearestCoord(coords, aLoc):
-	alt = 10
+	alt = 15
+	
 	dist = 100000
 	for i in range(0, len(coords)):
 		# LocPoint=LocationGlobalRelative(coords[i][0],coords[i][1],alt)
@@ -318,7 +319,7 @@ def Tri(coords, i, sens):
 # Fonction de calcul du diametre du cercle
 # coords : Liste avec les coordonnees GPS (latitude,longitude)	
 def Diametre(coords):
-	alt = 10
+	alt = 15
 	dist = 0
 	# aLoc=LocationGlobalRelative(coords[0][0],coords[0][1],alt)
 	aLoc = Position(lat_deg=coords[0][0], lon_deg=coords[0][1], relative_alt_m=alt)
