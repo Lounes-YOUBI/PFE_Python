@@ -566,14 +566,14 @@ def Traj(VitesseCercle, Seuil_entree, Seuil_sortie, SensorValue, centre, angle, 
 
 parser = argparse.ArgumentParser()
 arg1 = parser.add_argument('--NbPts', type=int, default=15)
-arg2 = parser.add_argument('--Rayon', type=float, default=2)
+arg2 = parser.add_argument('--Rayon', type=float, default=6)
 arg3 = parser.add_argument('--it', type=int, default=4)
 arg4 = parser.add_argument('--fact_dist', type=float, default=2)
 arg5 = parser.add_argument('--VitesseCercle', type=float, default=1.4)
 arg6 = parser.add_argument('--GAxe', type=float, default=1.3)
 arg7 = parser.add_argument('--PAxe', type=float, default=0.7)
 arg8 = parser.add_argument('--Vent', type=float, default=90)
-arg9 = parser.add_argument('--altitude', type=float, default=3)
+arg9 = parser.add_argument('--altitude', type=float, default=30)
 ar10 = parser.add_argument('--angle', type=float, default=85)
 ar11 = parser.add_argument('--Min_battery', type=float, default=-10)
 args = vars(parser.parse_args())
@@ -675,9 +675,9 @@ sample = 150
 
 # Point GPS du coeur du nuage de fumee
 
-#centre = Position(lat_deg=48.6295618, lon_deg = 7.7871662, relative_alt_m = alt)
+centre = Position(lat_deg=48.6295618, lon_deg = 7.7871662, relative_alt_m = alt)
 # home centre = Position(lat_deg=48.6298145, lon_deg = 7.7889851, relative_alt_m = alt)
-centre = Position(lat_deg=48.6298188, lon_deg = 7.7887326, relative_alt_m = alt)
+#centre = Position(lat_deg=48.6298188, lon_deg = 7.7887326, relative_alt_m = alt)
 
 # Points cardinaux defini pour la procedure de fin de suivi de frontiere
 # est=LocationGlobalRelative(centre.lat,centre.lon+larg/Klon,alt)#Point a l'Est
