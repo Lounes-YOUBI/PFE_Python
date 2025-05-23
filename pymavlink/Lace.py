@@ -573,7 +573,7 @@ arg5 = parser.add_argument('--VitesseCercle', type=float, default=1.4)
 arg6 = parser.add_argument('--GAxe', type=float, default=1.3)
 arg7 = parser.add_argument('--PAxe', type=float, default=0.7)
 arg8 = parser.add_argument('--Vent', type=float, default=90)
-arg9 = parser.add_argument('--altitude', type=float, default=30)
+arg9 = parser.add_argument('--altitude', type=float, default=1)
 ar10 = parser.add_argument('--angle', type=float, default=85)
 ar11 = parser.add_argument('--Min_battery', type=float, default=-10)
 args = vars(parser.parse_args())
@@ -674,10 +674,9 @@ longu = 30 * 1
 sample = 150
 
 # Point GPS du coeur du nuage de fumee
-# centre=LocationGlobalRelative(48.858114, 7.205582,alt)
-#centre = Position(lat_deg=48.858114, lon_deg = 7.205582, relative_alt_m = alt)
-centre = Position(lat_deg=48.6295618, lon_deg = 7.7871662, relative_alt_m = alt)
 
+#centre = Position(lat_deg=48.6295618, lon_deg = 7.7871662, relative_alt_m = alt)
+centre = Position(lat_deg=48.6298145, lon_deg = 7.7889851, relative_alt_m = alt)
 
 
 # Points cardinaux defini pour la procedure de fin de suivi de frontiere
