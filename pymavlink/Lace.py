@@ -565,15 +565,15 @@ def Traj(VitesseCercle, Seuil_entree, Seuil_sortie, SensorValue, centre, angle, 
 #### Donnees en entrees du programme à rentrer ou une valeur par défaut est donnee ######
 
 parser = argparse.ArgumentParser()
-arg1 = parser.add_argument('--NbPts', type=int, default=35)
-arg2 = parser.add_argument('--Rayon', type=float, default=18)
+arg1 = parser.add_argument('--NbPts', type=int, default=15)
+arg2 = parser.add_argument('--Rayon', type=float, default=5)
 arg3 = parser.add_argument('--it', type=int, default=4)
 arg4 = parser.add_argument('--fact_dist', type=float, default=2)
 arg5 = parser.add_argument('--VitesseCercle', type=float, default=1.4)
 arg6 = parser.add_argument('--GAxe', type=float, default=1)
 arg7 = parser.add_argument('--PAxe', type=float, default=1)
 arg8 = parser.add_argument('--Vent', type=float, default=90)
-arg9 = parser.add_argument('--altitude', type=float, default=15)
+arg9 = parser.add_argument('--altitude', type=float, default=30)
 ar10 = parser.add_argument('--angle', type=float, default=85)
 ar11 = parser.add_argument('--Min_battery', type=float, default=-10)
 args = vars(parser.parse_args())
