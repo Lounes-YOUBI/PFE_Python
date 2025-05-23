@@ -189,7 +189,7 @@ def goto(latitude, longitude, altitude):
 	""" Envoie le drone vers une position GPS en mode GUIDED """
 
 	# Vérifier si le drone est bien en mode GUIDED
-	set_mode("GUIDED")
+	#set_mode("GUIDED")
 
 	# Envoyer la commande MAVLink NAV_WAYPOINT
 	master.mav.mission_item_send(
@@ -224,7 +224,7 @@ def simple_goto(latitude, longitude, altitude):
     """ Envoie le drone vers une position GPS en mode GUIDED """
 
     # Vérifier si le drone est bien en mode GUIDED
-    set_mode("GUIDED")
+    #set_mode("GUIDED")
 
     # Envoyer une commande directe de déplacement
     master.mav.set_position_target_global_int_send(
@@ -728,8 +728,8 @@ while True:
 print("ICI2")
 # vehicle.channels.overrides['3'] = 1500 #Poussee vertical du drone
 set_throttle_override(1500)
-set_mode("LOITER")  # Passage du mode "LOITER" le drone garde son altitude et sa position
-time.sleep(2)
+#set_mode("LOITER")  # Passage du mode "LOITER" le drone garde son altitude et sa position
+#time.sleep(2)
 
 while True:
 	if get_battery_cap() < batt_min:
@@ -769,7 +769,7 @@ while True:
 		# Si le seuil critique est depasse on passe a la procedure de fin de suivi de frontiere
 		print("--- Seuil critique dépassé !!! ---")
 		break
-	set_mode("LOITER")  # Mode "LOITER" lorsque le seuil du capteur est depasse
+	#set_mode("LOITER")  # Mode "LOITER" lorsque le seuil du capteur est depasse
 	time.sleep(0.3)
 
 ################# Procedure de fin de suivi de frontiere ######################
