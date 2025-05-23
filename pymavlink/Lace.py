@@ -566,7 +566,7 @@ def Traj(VitesseCercle, Seuil_entree, Seuil_sortie, SensorValue, centre, angle, 
 
 parser = argparse.ArgumentParser()
 arg1 = parser.add_argument('--NbPts', type=int, default=15)
-arg2 = parser.add_argument('--Rayon', type=float, default=12)
+arg2 = parser.add_argument('--Rayon', type=float, default=4)
 arg3 = parser.add_argument('--it', type=int, default=4)
 arg4 = parser.add_argument('--fact_dist', type=float, default=2)
 arg5 = parser.add_argument('--VitesseCercle', type=float, default=1.4)
