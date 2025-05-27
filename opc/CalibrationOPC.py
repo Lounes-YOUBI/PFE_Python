@@ -17,7 +17,7 @@ import os
 import atexit
 
 class PM25Logger:
-    def __init__(self, csv_filename='pm25_data.csv', read_interval=10):
+    def __init__(self, csv_filename='pm25_data.csv', read_interval=2):
         self.csv_filename = csv_filename
         self.read_interval = read_interval
         self.running = True
@@ -207,7 +207,7 @@ def main():
     """Fonction principale"""
     # Configuration
     CSV_FILENAME = 'pm25_data.csv'  # Nom du fichier de sortie
-    READ_INTERVAL = 10  # Intervalle entre les lectures en secondes
+    READ_INTERVAL = 2  # Intervalle entre les lectures en secondes
     
     # Créer et lancer le logger
     logger = PM25Logger(csv_filename=CSV_FILENAME, read_interval=READ_INTERVAL)
