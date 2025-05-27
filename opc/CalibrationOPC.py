@@ -17,7 +17,7 @@ import os
 import atexit
 
 class PM25Logger:
-    def __init__(self, csv_filename='pm25_data.csv', read_interval=1):
+    def __init__(self, csv_filename='pm25_data.csv', read_interval=10):
         self.csv_filename = csv_filename
         self.read_interval = read_interval
         self.running = True
@@ -63,7 +63,12 @@ class PM25Logger:
             
             print(f'Informations capteur: {self.dev.info()}')
             print(f'Numéro de série: {self.dev.serial()}')
-            print(f'Version firmware: {self.dev.firmware()}')
+            
+            # Tenter d'afficher la version firmware si disponible
+            try:
+                print(f'Version firmware: {self.dev.firmware()}')
+            except AttributeError:
+                print('Version firmware: Non disponible pour ce modèle')
             
             # Allumer le ventilateur et le laser
             self.dev.on()
